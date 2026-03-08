@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Día de la Mujer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Lato:wght@300;400&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #ede7f6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+      padding: 24px 16px;
+      overflow-x: hidden;
+    }
+
+    #petalCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: min(620px, 100%);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow:
+        0 8px 40px rgba(186,104,200,.3),
+        0 2px 8px rgba(0,0,0,.08),
+        0 0 0 1px rgba(255,255,255,.6);
+      animation: cardIn .9s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes cardIn {
+      from { opacity:0; transform:translateY(30px) scale(.97); }
+      to   { opacity:1; transform:none; }
+    }
+
+    /* HEADER */
+    .header {
+      position: relative;
+      background: linear-gradient(150deg, #6a1b9a 0%, #ab47bc 45%, #ce93d8 80%, #f8bbd0 100%);
+      padding: 52px 44px 72px;
+      text-align: center;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 60% 30%, rgba(255,255,255,.12) 0%, transparent 60%);
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 52px;
+      background: white;
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .header-tag {
+      position: relative;
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 300;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.85);
+      margin-bottom: 20px;
+      animation: fadeUp .7s .2s both;
+    }
+    .header h1 {
+      position: relative;
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(3.2rem, 11vw, 5.2rem);
+      color: #fff;
+      line-height: 1.1;
+      text-shadow: 0 2px 24px rgba(74,0,114,.45);
+      animation: fadeUp .7s .35s both;
+    }
+    .header-sub {
+      position: relative;
+      margin-top: 14px;
+      font-size: .92rem;
+      font-weight: 300;
+      letter-spacing: .12em;
+      color: rgba(255,255,255,.82);
+      animation: fadeUp .7s .5s both;
+    }
+    .flower-row {
+      position: relative;
+      margin-top: 20px;
+      font-size: 1.55rem;
+      letter-spacing: .25em;
+      animation: fadeUp .7s .62s both;
+    }
+
+    /* BODY */
+    .body {
+      background: #fff;
+      padding: 40px 44px 32px;
+    }
+
+    .verse {
+      text-align: center;
+      margin-bottom: 32px;
+      animation: fadeUp .7s .7s both;
+    }
+    .verse p {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.05rem, 3vw, 1.25rem);
+      font-style: italic;
+      line-height: 1.9;
+      color: #7b1fa2;
+    }
+    .divider {
+      margin: 16px auto;
+      width: 64px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #f48fb1, #ce93d8, #f48fb1, transparent);
+      border-radius: 2px;
+    }
+
+    .message {
+      font-size: clamp(.93rem, 2.4vw, 1.03rem);
+      line-height: 1.92;
+      color: #4a4060;
+      animation: fadeUp .7s .8s both;
+    }
+    .message p + p { margin-top: 15px; }
+    .message strong { font-family: 'Playfair Display', serif; color: #9c27b0; font-weight: 700; }
+    .message em     { color: #e91e8c; font-style: normal; font-weight: 700; }
+
+    /* QUALITIES */
+    .qualities {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 11px;
+      margin: 32px 0 0;
+      animation: fadeUp .7s .9s both;
+    }
+    .q-card {
+      background: linear-gradient(150deg, #fce4ec, #f3e5f5);
+      border-radius: 14px;
+      padding: 16px 10px 14px;
+      text-align: center;
+      border: 1px solid rgba(186,104,200,.22);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .q-card:hover {
+      transform: translateY(-5px) scale(1.03);
+      box-shadow: 0 14px 30px rgba(186,104,200,.3);
+    }
+    .q-card .ic  { font-size: 1.75rem; margin-bottom: 6px; display: block; }
+    .q-card .lbl {
+      font-family: 'Playfair Display', serif;
+      font-size: .8rem; font-weight: 700;
+      color: #7b1fa2;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .q-card .dsc {
+      font-size: .74rem;
+      color: #9c4dcc;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    /* BANNER */
+    .banner {
+      margin: 34px -44px 0;
+      background: linear-gradient(135deg, #f8bbd0 0%, #e1bee7 50%, #f8bbd0 100%);
+      padding: 30px 44px;
+      text-align: center;
+      animation: fadeUp .7s 1s both;
+    }
+    .banner p {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(.98rem, 2.8vw, 1.18rem);
+      font-style: italic;
+      color: #4a148c;
+      line-height: 1.7;
+    }
+    .banner .attr {
+      margin-top: 10px;
+      font-size: .75rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: #7b1fa2;
+      font-family: 'Lato', sans-serif;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #fce4ec;
+      padding: 24px 44px 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-top: 2px solid rgba(186,104,200,.22);
+      animation: fadeUp .7s 1.1s both;
+    }
+    .footer-left .from {
+      font-size: .72rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: #ba68c8;
+    }
+    .footer-left .name {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.1rem;
+      color: #6a1b9a;
+      line-height: 1.15;
+      margin-top: 2px;
+    }
+    .footer-left .date {
+      font-size: .78rem;
+      color: #ab47bc;
+      letter-spacing: .1em;
+      margin-top: 3px;
+    }
+    .icons {
+      display: flex; gap: 7px;
+    }
+    .icons span {
+      font-size: 1.35rem;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    .icons span:nth-child(2) { animation-delay: .3s; }
+    .icons span:nth-child(3) { animation-delay: .6s; }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.35); }
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:none; }
+    }
+
+    @media (max-width: 480px) {
+      .header, .body { padding-left: 22px; padding-right: 22px; }
+      .banner        { margin-left: -22px; margin-right: -22px; padding: 26px 22px; }
+      .footer        { padding-left: 22px; padding-right: 22px; }
+      .qualities     { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="petalCanvas"></canvas>
+
+<div class="card">
+
+  <div class="header">
+    <div class="header-tag">✦ 8 de Marzo · Día Internacional de la Mujer ✦</div>
+    <h1>Eres Especial</h1>
+    <p class="header-sub">Un regalo para la mujer más increíble del mundo</p>
+    <div class="flower-row">🌸 🌷 💐 🌷 🌸</div>
+  </div>
+
+  <div class="body">
+
+    <div class="verse">
+      <p>
+        Hay mujeres que iluminan el mundo<br>
+        con solo existir en él.<br>
+        <span style="font-size:.92em; color:#ba68c8;">Tú eres una de ellas.</span>
+      </p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="message">
+      <p>
+        Hoy es tu día, y quiero que sepas lo <strong>increíblemente valiosa</strong> que eres.
+        No solo por lo que haces, sino por lo que eres: tu sonrisa que alegra cualquier lugar,
+        tu fuerza silenciosa que inspira a todos los que te rodean, y ese corazón tan grande
+        que no cabe en palabras.
+      </p>
+      <p>
+        Eres <em>única</em>. No existe nadie en este mundo con tu misma luz, con tu misma forma
+        de amar, de reír, de levantarte después de los momentos difíciles. Todo lo que tocas
+        se convierte en algo mejor, y el mundo es un lugar más hermoso gracias a ti.
+      </p>
+      <p>
+        Mereces todo lo bueno que la vida puede ofrecer — <strong>amor, alegría, paz
+        y cada uno de tus sueños cumplidos</strong>. Nunca olvides lo extraordinaria que eres,
+        porque hay personas que te admiran profundamente y te llevan siempre en el corazón.
+      </p>
+    </div>
+
+    <div class="qualities">
+      <div class="q-card"><span class="ic">🌹</span><div class="lbl">Hermosa</div><div class="dsc">Por dentro y por fuera, siempre.</div></div>
+      <div class="q-card"><span class="ic">💪</span><div class="lbl">Fuerte</div><div class="dsc">Capaz de todo lo que se propone.</div></div>
+      <div class="q-card"><span class="ic">✨</span><div class="lbl">Brillante</div><div class="dsc">Su luz no se apaga con nada.</div></div>
+      <div class="q-card"><span class="ic">💖</span><div class="lbl">Amorosa</div><div class="dsc">Ama con todo el corazón.</div></div>
+      <div class="q-card"><span class="ic">🦋</span><div class="lbl">Libre</div><div class="dsc">Vuela alto, sin límites.</div></div>
+      <div class="q-card"><span class="ic">🌟</span><div class="lbl">Especial</div><div class="dsc">Como ninguna otra en el mundo.</div></div>
+    </div>
+
+  </div>
+
+  <div class="banner">
+    <p>
+      "Una mujer con sueños, con fuerza y con amor<br>
+      es capaz de cambiar su mundo<br>
+      y el de todos los que la rodean."
+    </p>
+    <div class="attr">— Con todo el cariño del mundo —</div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-left">
+      <div class="from">De parte de:</div>
+      <div class="name">Miguel Bustillos</div>
+      <div class="date">08 / 03 / 2026</div>
+    </div>
+    <div class="icons">
+      <span>🌸</span>
+      <span>💜</span>
+      <span>🌸</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const canvas = document.getElementById('petalCanvas');
+  const ctx    = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COLORS = ['#f48fb1','#ce93d8','#f8bbd0','#e1bee7','#f06292','#ba68c8','#ffd6e7','#d4a8e8'];
+
+  class Petal {
+    constructor(init) {
+      this.reset(init);
+    }
+    reset(init) {
+      this.x     = Math.random() * canvas.width;
+      this.y     = init ? Math.random() * canvas.height : -15;
+      this.rx    = 5 + Math.random() * 9;
+      this.ry    = this.rx * (.4 + Math.random() * .3);
+      this.rot   = Math.random() * Math.PI * 2;
+      this.vx    = (Math.random() - .5) * 1.4;
+      this.vy    = .5 + Math.random() * 1.3;
+      this.vrot  = (Math.random() - .5) * .05;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.alpha = .5 + Math.random() * .45;
+    }
+    step() {
+      this.x   += this.vx;
+      this.y   += this.vy;
+      this.rot += this.vrot;
+      if (this.y > canvas.height + 20) this.reset(false);
+    }
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rot);
+      ctx.globalAlpha = this.alpha;
+      ctx.fillStyle   = this.color;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.rx, this.ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  const petals = Array.from({ length: 55 }, (_, i) => new Petal(true));
+
+  (function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    petals.forEach(p => { p.step(); p.draw(); });
+    requestAnimationFrame(loop);
+  })();
+</script>
+
+</body>
+</html>
